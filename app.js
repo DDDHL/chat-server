@@ -1,9 +1,10 @@
 const express = require('express')
 const app = express()
 const createJWT = require('jsonwebtoken')
-var { expressjwt: jwt } = require('express-jwt')
 const cors = require('cors')
 const error = require('./utils/error')
+var { expressjwt: jwt } = require('express-jwt')
+const { getUserInfo, checkUser } = require('./data/user')
 // token 密钥
 const secretKey = 'dddhl ^_^'
 
@@ -24,18 +25,48 @@ app.use(
 // 接口
 app.post('/logout', (req, res) => {
   res.send({
-    code: 200,
+    code: '',
     message: '退出登录成功',
-    data: { 用户: req.auth.account },
+    data: { token解析: req.auth.account },
   })
 })
 
 app.post('/user/login', (req, res) => {
   var account = req.body.account
-  res.send({
-    status: 200,
-    message: '登录成功',
-    token: createJWT.sign({ account }, secretKey, { expiresIn: '2h' }),
+  var password = req.body.password
+  checkUser(account).then((result) => {
+    if (!result[0]) {
+      // 没有该用户
+      res.send({
+        code: 1003,
+        message: '该账号未注册',
+        data: {},
+      })
+      return
+    }
+    // 有此用户，进行判断
+    if (password === result[0].password) {
+      getUserInfo(account).then((result) => {
+        res.send({
+          code: '',
+          message: '登录成功',
+          data: {
+            token: createJWT.sign({ account }, secretKey, {
+              expiresIn: '2h',
+            }),
+            info: result,
+          },
+        })
+        return
+      })
+    } else {
+      // 密码错误
+      res.send({
+        code: 1004,
+        message: '密码错误',
+        data: {},
+      })
+    }
   })
 })
 
