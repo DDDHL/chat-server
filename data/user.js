@@ -1,4 +1,4 @@
-// mysql.js 封装的插入函数
+// 用户数据库
 const mysql = require('mysql')
 
 // 连接数据库
@@ -23,6 +23,7 @@ exports.checkUser = (account) => {
     })
   })
 }
+
 // 根据账户查询用户信息
 exports.getUserInfo = (account) => {
   let strSql =
