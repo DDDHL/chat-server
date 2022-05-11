@@ -47,7 +47,6 @@ router.post('/user/checkReg', (req, res) => {
 // 用户登录
 router.post('/user/login', (req, res) => {
   var account = req.body.account
-  console.log(decrypt(req.body.password))
   var password = req.body.password
   checkUser(account).then((result) => {
     if (result.length == 0) {
@@ -60,7 +59,7 @@ router.post('/user/login', (req, res) => {
       return
     }
     // 有此用户，进行判断
-    if (password === result[0].password) {
+    if (decrypt(password) === result[0].password) {
       getUserInfo(account).then((result) => {
         res.send({
           code: '',
@@ -69,7 +68,7 @@ router.post('/user/login', (req, res) => {
             token: createJWT.sign({ account }, secretKey, {
               expiresIn: '2h',
             }),
-            info: result,
+            info: result[0],
           },
         })
         return
