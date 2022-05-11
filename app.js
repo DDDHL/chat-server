@@ -20,7 +20,7 @@ app.use(
   }).unless({ path: [/^\/user\//] })
 )
 
-// 接口
+// 用户模块接口
 app.use(userRouter)
 
 // 处理异常，错误中间件

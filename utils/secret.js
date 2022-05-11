@@ -1,47 +1,46 @@
 // 密码加密解密
 const CryptoJS = require('crypto-js')
 
-// 默认的 KEY 与 iv 如果没有给
-const KEY = CryptoJS.enc.Utf8.parse('dddhl520526.>?')
-const IV = CryptoJS.enc.Utf8.parse('dddhl520526.>?')
+const SECRET_KEY = CryptoJS.enc.Utf8.parse('dddhl5205261314999aaaaaaaaaaa.>?')
+const SECRET_IV = CryptoJS.enc.Utf8.parse('?/.aoijsdoiajwe.w55541165165165')
 /**
- * AES加密 ：字符串 key iv  返回base64
+ * 加密方法
+ * @param data
+ * @returns {string}
  */
-const Encrypt = (word, keyStr, ivStr) => {
-  let key = KEY
-  let iv = IV
-  if (keyStr) {
-    key = CryptoJS.enc.Utf8.parse(keyStr)
-    iv = CryptoJS.enc.Utf8.parse(ivStr)
+const encrypt = (data) => {
+  if (typeof data === 'object') {
+    try {
+      // eslint-disable-next-line no-param-reassign
+      data = JSON.stringify(data)
+    } catch (error) {
+      console.log('encrypt error:', error)
+    }
   }
-  let srcs = CryptoJS.enc.Utf8.parse(word)
-  var encrypted = CryptoJS.AES.encrypt(srcs, key, {
-    iv: iv,
+  const dataHex = CryptoJS.enc.Utf8.parse(data)
+  const encrypted = CryptoJS.AES.encrypt(dataHex, SECRET_KEY, {
+    iv: SECRET_IV,
     mode: CryptoJS.mode.CBC,
-    padding: CryptoJS.pad.ZeroPadding,
+    padding: CryptoJS.pad.Pkcs7,
   })
-  return CryptoJS.enc.Base64.stringify(encrypted.ciphertext)
+  return encrypted.ciphertext.toString()
 }
+
 /**
- * AES 解密 ：字符串 key iv  返回base64
- *
- * @return {string}
+ * 解密方法
+ * @param data
+ * @returns {string}
  */
-const Decrypt = (word) => {
-  let key = KEY
-  let iv = IV
-
-  let base64 = CryptoJS.enc.Base64.parse(word)
-  let src = CryptoJS.enc.Base64.stringify(base64)
-
-  let decrypt = CryptoJS.AES.decrypt(src, key, {
-    iv: iv,
+const decrypt = (data) => {
+  const encryptedHexStr = CryptoJS.enc.Hex.parse(data)
+  const str = CryptoJS.enc.Base64.stringify(encryptedHexStr)
+  const decrypt = CryptoJS.AES.decrypt(str, SECRET_KEY, {
+    iv: SECRET_IV,
     mode: CryptoJS.mode.CBC,
-    padding: CryptoJS.pad.ZeroPadding,
+    padding: CryptoJS.pad.Pkcs7,
   })
-
-  let decryptedStr = decrypt.toString(CryptoJS.enc.Utf8)
+  const decryptedStr = decrypt.toString(CryptoJS.enc.Utf8)
   return decryptedStr.toString()
 }
 
-module.exports = { Encrypt, Decrypt }
+module.exports = { encrypt, decrypt }

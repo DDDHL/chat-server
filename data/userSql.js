@@ -13,11 +13,34 @@ db.query('SELECT 1', (err, results) => {
   if (err) throw new Error(err.message)
 })
 
+// 检测用户账户是否存在
+exports.checkReg = (account) => {
+  let strSql = 'select account from sys_user where account = (?)'
+  return new Promise((resolve, reject) => {
+    db.query(strSql, [account], (err, results) => {
+      if (err) reject(err.message)
+      resolve(results)
+    })
+  })
+}
+
+// 注册用户
+exports.regUser = (account, password, sex, name) => {
+  let strSql =
+    'insert into sys_user(account, password, sex, name) values(?,?,?,?)'
+  return new Promise((resolve, reject) => {
+    db.query(strSql, [account, password, sex, name], (err, results) => {
+      if (err) reject(err.message)
+      resolve(results)
+    })
+  })
+}
+
 // 验证账户密码
 exports.checkUser = (account) => {
   let strSql = 'select password from sys_user where account = (?)'
   return new Promise((resolve, reject) => {
-    db.query(strSql, [account], async (err, results) => {
+    db.query(strSql, [account], (err, results) => {
       if (err) reject(err.message)
       resolve(results)
     })
