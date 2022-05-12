@@ -10,7 +10,7 @@ const db = mysql.createPool({
 })
 // 检查 MySQL 模块是否正常
 db.query('SELECT 1', (err, results) => {
-  if (err) throw new Error(err.message)
+  if (err) throw new Error('数据库连接失败')
 })
 
 // 检测用户账户是否存在
