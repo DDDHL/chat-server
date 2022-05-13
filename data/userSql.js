@@ -25,11 +25,11 @@ exports.checkReg = (account) => {
 }
 
 // 注册用户
-exports.regUser = (account, password, sex, name) => {
+exports.regUser = (account, password) => {
   let strSql =
     'insert into sys_user(account, password, sex, name) values(?,?,?,?)'
   return new Promise((resolve, reject) => {
-    db.query(strSql, [account, password, sex, name], (err, results) => {
+    db.query(strSql, [account, password, '男', '立花泷'], (err, results) => {
       if (err) reject(err.message)
       resolve(results)
     })

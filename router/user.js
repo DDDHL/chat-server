@@ -9,12 +9,7 @@ const secretKey = 'dddhl ^_^'
 
 // 用户注册
 router.post('/user/regUser', (req, res) => {
-  regUser(
-    req.body.account,
-    req.body.password,
-    req.body.sex,
-    req.body.name
-  ).then((result) => {
+  regUser(req.body.account, req.body.password).then((result) => {
     if (result.affectedRows === 1) {
       res.send({
         code: '',
