@@ -6,5 +6,21 @@
     "express-jwt": "^7.7.0",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1"
-  }
+  },
+  "name": "chat-server",
+  "description": "基于 nodejs 的 express 框架开发。模块化管理",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {},
+  "scripts": {
+    "serve": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/donghe-li/chat-server.git"
+  },
+  "author": "",
+  "license": "ISC"
 }
