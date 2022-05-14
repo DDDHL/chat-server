@@ -9,7 +9,11 @@ const secretKey = 'dddhl ^_^'
 
 // 用户注册
 router.post('/user/regUser', (req, res) => {
-  regUser(req.body.account, req.body.password).then((result) => {
+  let password = decrypt(req.body.password)
+  if (!req.body.account || !password) {
+    throw new Error(1006)
+  }
+  regUser(req.body.account, password).then((result) => {
     if (result.affectedRows === 1) {
       res.send({
         code: '',
@@ -22,6 +26,9 @@ router.post('/user/regUser', (req, res) => {
 
 // 检测用户账户是否存在
 router.post('/user/checkReg', (req, res) => {
+  if (!req.body.account) {
+    throw new Error(1006)
+  }
   checkReg(req.body.account).then((result) => {
     if (result.length == 0) {
       res.send({
@@ -32,7 +39,7 @@ router.post('/user/checkReg', (req, res) => {
     } else {
       res.send({
         code: 1005,
-        message: '该账号已被注册',
+        message: '账号被注册',
         data: {},
       })
     }
@@ -43,12 +50,15 @@ router.post('/user/checkReg', (req, res) => {
 router.post('/user/login', (req, res) => {
   var account = req.body.account
   var password = req.body.password
+  if (!account || !password) {
+    throw new Error(1006)
+  }
   checkUser(account).then((result) => {
     if (result.length == 0) {
       // 没有该用户
       res.send({
         code: 1003,
-        message: '该账号未注册',
+        message: '账号未注册',
         data: {},
       })
       return
@@ -66,7 +76,6 @@ router.post('/user/login', (req, res) => {
             info: result[0],
           },
         })
-        return
       })
     } else {
       // 密码错误
