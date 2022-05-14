@@ -13,28 +13,16 @@ router.post('/user/regUser', (req, res) => {
   if (!req.body.account || !password) {
     throw new Error(1006)
   }
-  regUser(req.body.account, password).then((result) => {
-    if (result.affectedRows === 1) {
-      res.send({
-        code: '',
-        message: '注册成功',
-        data: {},
-      })
-    }
-  })
-})
-
-// 检测用户账户是否存在
-router.post('/user/checkReg', (req, res) => {
-  if (!req.body.account) {
-    throw new Error(1006)
-  }
   checkReg(req.body.account).then((result) => {
     if (result.length == 0) {
-      res.send({
-        code: '',
-        message: '该账户可注册',
-        data: {},
+      regUser(req.body.account, password).then((result) => {
+        if (result.affectedRows === 1) {
+          res.send({
+            code: '',
+            message: '注册成功',
+            data: {},
+          })
+        }
       })
     } else {
       res.send({

@@ -14,3 +14,7 @@
 | 1004 |    密码错误    |
 | 1005 |   账号被注册   |
 | 1006 |    参数错误    |
+
+## 接口文档
+
+![ApiPost6 chat-server文档](https://console-docs.apipost.cn/preview/fa11bc47a236be4d/8fa8cdeb15b6498e)
