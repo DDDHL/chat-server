@@ -17,6 +17,13 @@
     "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+<<<<<<< HEAD
+=======
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/donghe-li/chat-server.git"
+  },
+>>>>>>> e868f3b608e713220d01fe57f05a3efe5950a591
   "author": "",
   "license": "ISC"
 }
