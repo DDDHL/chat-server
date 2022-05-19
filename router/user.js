@@ -7,6 +7,16 @@ var router = express.Router()
 // token 密钥
 const secretKey = 'dddhl ^_^'
 
+// 检测token有效性
+router.post('/checkToken', (req, res) => {
+  console.log(req)
+  res.send({
+    code: '',
+    message: 'token有效',
+    data: {},
+  })
+})
+
 // 用户注册
 router.post('/user/regUser', (req, res) => {
   let password = decrypt(req.body.password)
@@ -61,7 +71,18 @@ router.post('/user/login', (req, res) => {
             token: createJWT.sign({ account }, secretKey, {
               expiresIn: '2h',
             }),
-            info: result[0],
+            info: {
+              account: result[0].account,
+              avatar:
+                'http://' +
+                req.headers.host +
+                '/public/images/' +
+                result[0].avatar,
+              id: result[0].id,
+              name: result[0].name,
+              sex: result[0].sex,
+              signature: result[0].signature,
+            },
           },
         })
       })

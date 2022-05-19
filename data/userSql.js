@@ -27,12 +27,16 @@ exports.checkReg = (account) => {
 // 注册用户
 exports.regUser = (account, password) => {
   let strSql =
-    'insert into sys_user(account, password, sex, name) values(?,?,?,?)'
+    'insert into sys_user(account, password, sex, name ,avatar) values(?,?,?,?,?)'
   return new Promise((resolve, reject) => {
-    db.query(strSql, [account, password, '男', '立花泷'], (err, results) => {
-      if (err) reject(err.message)
-      resolve(results)
-    })
+    db.query(
+      strSql,
+      [account, password, '男', '立花泷', 'head.jpg'],
+      (err, results) => {
+        if (err) reject(err.message)
+        resolve(results)
+      }
+    )
   })
 }
 
@@ -50,7 +54,7 @@ exports.checkUser = (account) => {
 // 根据账户查询用户信息
 exports.getUserInfo = (account) => {
   let strSql =
-    'select id,name,account,signature,sex from sys_user where account = (?)'
+    'select id,name,account,signature,sex,avatar from sys_user where account = (?)'
   return new Promise((resolve, reject) => {
     db.query(strSql, [account], async (err, results) => {
       if (err) reject(err.message)
