@@ -1,4 +1,4 @@
-// 用户数据库
+// 操作用户信息数据库
 const mysql = require('mysql')
 
 // 连接数据库
@@ -27,11 +27,11 @@ exports.checkReg = (account) => {
 // 注册用户
 exports.regUser = (account, password) => {
   let strSql =
-    'insert into sys_user(account, password, sex, name ,avatar) values(?,?,?,?,?)'
+    'insert into sys_user(account, password, sex, name ,avatar,signature) values(?,?,?,?,?)'
   return new Promise((resolve, reject) => {
     db.query(
       strSql,
-      [account, password, '男', '立花泷', 'head.jpg'],
+      [account, password, '男', '立花泷', 'head.jpg', '这个人很懒,没有签名'],
       (err, results) => {
         if (err) reject(err.message)
         resolve(results)
@@ -57,6 +57,17 @@ exports.getUserInfo = (account) => {
     'select id,name,account,signature,sex,avatar from sys_user where account = (?)'
   return new Promise((resolve, reject) => {
     db.query(strSql, [account], async (err, results) => {
+      if (err) reject(err.message)
+      resolve(results)
+    })
+  })
+}
+
+// 模糊查询好友
+exports.blurSearch = (data) => {
+  let strSql = `select id,account,sex,signature,name,avatar from sys_user where account like '%${data}%' or name like '%${data}%'`
+  return new Promise((resolve, reject) => {
+    db.query(strSql, (err, results) => {
       if (err) reject(err.message)
       resolve(results)
     })

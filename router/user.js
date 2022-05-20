@@ -1,7 +1,15 @@
 // 用户路由
 const createJWT = require('jsonwebtoken')
-const { getUserInfo, checkUser, regUser, checkReg } = require('../data/userSql')
+const {
+  getUserInfo,
+  checkUser,
+  regUser,
+  checkReg,
+  blurSearch,
+} = require('../data/userSql')
+const { addFriendList } = require('../data/userFriendSql')
 const { decrypt } = require('../utils/secret')
+const { newImageAddress } = require('../utils/imagesAddress')
 var express = require('express')
 var router = express.Router()
 // token 密钥
@@ -9,7 +17,6 @@ const secretKey = 'dddhl ^_^'
 
 // 检测token有效性
 router.post('/checkToken', (req, res) => {
-  console.log(req)
   res.send({
     code: '',
     message: 'token有效',
@@ -23,14 +30,21 @@ router.post('/user/regUser', (req, res) => {
   if (!req.body.account || !password) {
     throw new Error(1006)
   }
+  // 检测是否存在账号
   checkReg(req.body.account).then((result) => {
     if (result.length == 0) {
+      // 注册用户
       regUser(req.body.account, password).then((result) => {
         if (result.affectedRows === 1) {
-          res.send({
-            code: '',
-            message: '注册成功',
-            data: {},
+          // 生成好友列表
+          addFriendList(req.body.account).then((result) => {
+            if (result.affectedRows === 1) {
+              res.send({
+                code: '',
+                message: '注册成功',
+                data: {},
+              })
+            }
           })
         }
       })
@@ -69,20 +83,9 @@ router.post('/user/login', (req, res) => {
           message: '登录成功',
           data: {
             token: createJWT.sign({ account }, secretKey, {
-              expiresIn: '2h',
+              expiresIn: '5h',
             }),
-            info: {
-              account: result[0].account,
-              avatar:
-                'http://' +
-                req.headers.host +
-                '/public/images/' +
-                result[0].avatar,
-              id: result[0].id,
-              name: result[0].name,
-              sex: result[0].sex,
-              signature: result[0].signature,
-            },
+            info: newImageAddress(req.headers.host, result),
           },
         })
       })
@@ -94,6 +97,21 @@ router.post('/user/login', (req, res) => {
         data: {},
       })
     }
+  })
+})
+
+// 模糊查询用户
+router.post('/blurSearch', (req, res) => {
+  let data = req.body.params
+  if (!data) {
+    throw new Error(1006)
+  }
+  blurSearch(data).then((result) => {
+    res.send({
+      code: '',
+      message: '',
+      data: newImageAddress(req.headers.host, result),
+    })
   })
 })
 

@@ -2,16 +2,16 @@
   "dependencies": {
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
-    "express": "^4.17.1",
+    "express": "^4.18.1",
     "express-jwt": "^7.7.0",
     "jsonwebtoken": "^8.5.1",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "nodejs-websocket": "^1.7.2"
   },
   "name": "chat-server",
   "description": "基于 nodejs 的 express 框架开发。模块化管理",
   "version": "1.0.0",
   "main": "app.js",
-  "devDependencies": {},
   "scripts": {
     "serve": "node app.js",
     "dev": "nodemon app.js",
