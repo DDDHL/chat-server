@@ -45,3 +45,14 @@ exports.searchFriendListInfo = (accountList) => {
     })
   })
 }
+
+// 添加好友
+exports.addFriend = (friendsList, account) => {
+  let strSql = `update sys_user_friends set friendId = (?) where userAccount = (?)`
+  return new Promise((resolve, reject) => {
+    db.query(strSql, [friendsList, account], (err, results) => {
+      if (err) reject(err.message)
+      resolve(results)
+    })
+  })
+}

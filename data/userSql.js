@@ -64,8 +64,8 @@ exports.getUserInfo = (account) => {
 }
 
 // 模糊查询好友
-exports.blurSearch = (data) => {
-  let strSql = `select id,account,sex,signature,name,avatar from sys_user where account like '%${data}%' or name like '%${data}%'`
+exports.blurSearch = (data, friend) => {
+  let strSql = `select id,account,sex,signature,name,avatar from sys_user where (account like '%${data}%' or name like '%${data}%') and account not in (${friend})`
   return new Promise((resolve, reject) => {
     db.query(strSql, (err, results) => {
       if (err) reject(err.message)

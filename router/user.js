@@ -7,7 +7,7 @@ const {
   checkReg,
   blurSearch,
 } = require('../data/userSql')
-const { addFriendList } = require('../data/userFriendSql')
+const { addFriendList, searchFriendList } = require('../data/userFriendSql')
 const { decrypt } = require('../utils/secret')
 const { newImageAddress } = require('../utils/imagesAddress')
 var express = require('express')
@@ -103,14 +103,42 @@ router.post('/user/login', (req, res) => {
 // 模糊查询用户
 router.post('/blurSearch', (req, res) => {
   let data = req.body.params
-  if (!data) {
+  let account = req.body.account
+  if (!data || !account) {
     throw new Error(1006)
   }
-  blurSearch(data).then((result) => {
-    res.send({
-      code: '',
-      message: '',
-      data: newImageAddress(req.headers.host, result),
+  // 先查询已添加好友
+  searchFriendList(account).then((result) => {
+    let friends = "'" + account + "'"
+    if (result.length) {
+      var list = JSON.parse(result[0].friendId)
+    }
+    if (list === undefined) {
+      res.send({
+        code: 1007,
+        message: '不允许未注册用户查询',
+        data: [],
+      })
+      return
+    }
+    if (list != null) {
+      // 用户有好友，排除好友和自己
+      // 循环处理成 '',''
+      friends += ','
+      for (let i = 0; i < list.length; i++) {
+        friends += "'" + list[i] + "'"
+        if (i != list.length - 1) {
+          friends += ','
+        }
+      }
+    }
+    // 用户没有添加好友，模糊查询除自己外的所有用户
+    blurSearch(data, friends).then((result) => {
+      res.send({
+        code: '',
+        message: '',
+        data: newImageAddress(req.headers.host, result),
+      })
     })
   })
 })

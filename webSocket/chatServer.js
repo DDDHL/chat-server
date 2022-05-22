@@ -1,17 +1,21 @@
+const ws = require('nodejs-websocket')
+var server
+var userList = new Map()
 exports.chatServer = (port) => {
-  const ws = require('nodejs-websocket')
-  const server = ws.createServer(function (socket) {
+  server = ws.createServer(function (socket) {
     // 读取字符串消息，事件名称为:text
-    var count = 1
     socket.on('text', function (str) {
-      // 在控制台输出前端传来的消息
-      console.log(str)
-      //向前端回复消息
-      socket.sendText('服务器端收到客户端发来的消息' + str + count++)
+      let data = JSON.parse(str)
+      if (data.state == 'connet') {
+        // 新用户连接进来
+        userList.set(data.account, socket)
+      } else {
+        // 发送信息
+        sendMsg(data.toAccount, data.fromAccount, data.msg)
+      }
     })
-
     socket.on('error', () => {
-      console.log('聊天服务器出错')
+      console.log('有客户端断开')
     })
   })
   server.listen(port, () => {
@@ -20,4 +24,17 @@ exports.chatServer = (port) => {
     console.log('服务器IP:http://localhost:' + port)
     console.log('')
   })
+}
+function sendMsg(to, from, msg) {
+  let toConn = userList.get(to)
+  let fromConn = userList.get(from)
+  if (toConn) {
+    // 在线情况下发送
+    toConn.sendText(JSON.stringify({ from: from, to: to, msg: msg }))
+  }
+  if (fromConn) {
+    // 在线情况下发送
+    fromConn.sendText(JSON.stringify({ from: from, to: to, msg: msg }))
+  }
+  // 保存聊天信息
 }
