@@ -3,9 +3,10 @@ const mysql = require('mysql')
 
 // 连接数据库
 const db = mysql.createPool({
-  host: '127.0.0.1',
+  host: 'localhost',
   user: 'root',
-  password: '',
+  port: 3306,
+  password: '123456',
   database: 'chat-server',
 })
 // 检查 MySQL 模块是否正常
@@ -27,7 +28,7 @@ exports.checkReg = (account) => {
 // 注册用户
 exports.regUser = (account, password) => {
   let strSql =
-    'insert into sys_user(account, password, sex, name ,avatar,signature) values(?,?,?,?,?)'
+    'insert into sys_user(account, password, sex, name ,avatar,signature) values(?,?,?,?,?,?)'
   return new Promise((resolve, reject) => {
     db.query(
       strSql,

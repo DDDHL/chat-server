@@ -12,6 +12,18 @@ exports.checkToken = (err, req, res, next) => {
 
 // 服务器错误中间件
 exports.err = (err, req, res, next) => {
-  console.log('服务器发生了错误' + err.message)
-  res.send({ code: 1001, message: '服务器发生了错误', data: err.message })
+  console.log('服务器错误' + err.message)
+  res.send({
+    code: 1001,
+    message: '服务器错误',
+    data: err.message,
+  })
+}
+// 解决数据库异步错误
+exports.promiseErr = (err, res) => {
+  console.log('数据库操作错误:', err.sqlMessage)
+  res.send({
+    code: 1006,
+    message: '参数错误,请检查接口',
+  })
 }

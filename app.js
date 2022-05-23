@@ -4,6 +4,7 @@ const cors = require('cors')
 const error = require('./utils/error')
 const userRouter = require('./router/user')
 const userFriendRouter = require('./router/userFriends')
+const chatRecords = require('./router/chatRecords')
 const path = require('path')
 const chat = require('./webSocket/chatServer')
 var { expressjwt: jwt } = require('express-jwt')
@@ -38,6 +39,8 @@ app.use(
 app.use(userRouter)
 // 用户好友模块
 app.use(userFriendRouter)
+// 聊天记录
+app.use(chatRecords)
 
 // 处理异常，错误中间件
 app.use(error.checkToken)

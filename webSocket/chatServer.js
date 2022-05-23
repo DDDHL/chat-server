@@ -1,4 +1,6 @@
 const ws = require('nodejs-websocket')
+const { saveChatRecordBySingle } = require('../data/chatRecordSql')
+var dayjs = require('dayjs')
 var server
 var userList = new Map()
 exports.chatServer = (port) => {
@@ -28,13 +30,36 @@ exports.chatServer = (port) => {
 function sendMsg(to, from, msg) {
   let toConn = userList.get(to)
   let fromConn = userList.get(from)
-  if (toConn) {
-    // 在线情况下发送
-    toConn.sendText(JSON.stringify({ from: from, to: to, msg: msg }))
-  }
-  if (fromConn) {
-    // 在线情况下发送
-    fromConn.sendText(JSON.stringify({ from: from, to: to, msg: msg }))
-  }
-  // 保存聊天信息
+  // 保存单人聊天信息
+  let time = dayjs().format('YYYY-MM-DD HH:mm')
+  saveChatRecordBySingle(from, to, msg, time)
+    .then((res) => {
+      if (res.affectedRows == 1) {
+        if (toConn) {
+          // 在线情况下发送
+          toConn.sendText(
+            JSON.stringify({
+              fromUser: from,
+              toUser: to,
+              chatRecord: msg,
+              createTime: time,
+            })
+          )
+        }
+        if (fromConn) {
+          // 在线情况下发送
+          fromConn.sendText(
+            JSON.stringify({
+              fromUser: from,
+              toUser: to,
+              chatRecord: msg,
+              createTime: time,
+            })
+          )
+        }
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
