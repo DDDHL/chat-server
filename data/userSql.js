@@ -74,3 +74,15 @@ exports.blurSearch = (data, friend) => {
     })
   })
 }
+
+// 修改个人资料
+exports.updateInfo = (sex, name, signature, account) => {
+  let strSql =
+    'update sys_user set sex = (?),name=(?),signature= (?) where account = (?)'
+  return new Promise((resolve, reject) => {
+    db.query(strSql, [sex, name, signature, account], (err, results) => {
+      if (err) reject(err.message)
+      resolve(results)
+    })
+  })
+}

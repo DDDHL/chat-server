@@ -4,7 +4,8 @@ const cors = require('cors')
 const error = require('./utils/error')
 const userRouter = require('./router/user')
 const userFriendRouter = require('./router/userFriends')
-const chatRecords = require('./router/chatRecords')
+const chatRecordsRouter = require('./router/chatRecords')
+const uploadRouter = require('./router/upload')
 const path = require('path')
 const chat = require('./webSocket/chatServer')
 var { expressjwt: jwt } = require('express-jwt')
@@ -26,7 +27,7 @@ app.use('/public', express.static(path.join(__dirname, 'public')))
 // 解析json
 app.use(express.json())
 
-// 解析token信息  user开头的接口无需验证
+// 解析token信息  user、public开头的接口无需验证
 const secretKey = 'dddhl ^_^'
 app.use(
   jwt({
@@ -40,7 +41,9 @@ app.use(userRouter)
 // 用户好友模块
 app.use(userFriendRouter)
 // 聊天记录
-app.use(chatRecords)
+app.use(chatRecordsRouter)
+// 图片上传
+app.use(uploadRouter)
 
 // 处理异常，错误中间件
 app.use(error.checkToken)

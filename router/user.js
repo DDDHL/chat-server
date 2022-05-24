@@ -6,6 +6,7 @@ const {
   regUser,
   checkReg,
   blurSearch,
+  updateInfo,
 } = require('../data/userSql')
 const { addFriendList, searchFriendList } = require('../data/userFriendSql')
 const { decrypt } = require('../utils/secret')
@@ -98,7 +99,7 @@ router.post('/user/login', (req, res) => {
               message: '登录成功',
               data: {
                 token: createJWT.sign({ account }, secretKey, {
-                  expiresIn: '5h',
+                  expiresIn: '999h',
                 }),
                 info: newImageAddress(req.headers.host, result),
               },
@@ -172,6 +173,29 @@ router.post('/blurSearch', (req, res) => {
     })
 })
 
+// 修改个人信息
+router.post('/changeInfo', (req, res) => {
+  let account = req.auth.account
+  let sex = req.body.sex
+  let name = req.body.name
+  let signature = req.body.signature
+  if (!account || !sex || !name || !signature) {
+    throw new Error(1006)
+  }
+  updateInfo(sex, name, signature, account)
+    .then((result) => {
+      if (result.affectedRows == 1) {
+        res.send({
+          code: '',
+          message: '更新个人信息成功!',
+          data: {},
+        })
+      }
+    })
+    .catch((err) => {
+      promiseErr(err, res)
+    })
+})
 // 用户退出
 router.post('/logout', (req, res) => {
   res.send({

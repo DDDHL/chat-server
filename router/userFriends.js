@@ -6,6 +6,7 @@ const {
   searchFriendListInfo,
   addFriend,
 } = require('../data/userFriendSql')
+const { checkChatRecordBySingle } = require('../data/chatRecordSql')
 const { newImageAddress } = require('../utils/imagesAddress')
 var { promiseErr } = require('../utils/error')
 
@@ -13,7 +14,7 @@ var { promiseErr } = require('../utils/error')
 router.post('/addNewFriend', (req, res) => {
   let account = req.auth.account
   let paramsAccount = req.body.paramsAccount
-  if (!account && !paramsAccount) {
+  if (!account || !paramsAccount) {
     throw new Error(1006)
   }
   // 查询好友列表
@@ -95,7 +96,24 @@ router.post('/getFriendList', (req, res) => {
         }
       }
       searchFriendListInfo(data)
-        .then((result) => {
+        .then(async (result) => {
+          // 查询最新的一条记录拼接到好友列表
+
+          for (let i = 0; i < result.length; i++) {
+            await checkChatRecordBySingle(account, result[i].account, 1)
+              .then((record) => {
+                if (record[0]) {
+                  result[i].newRecord = record[0].chatRecord
+                  result[i].newRecordTime = record[0].createTime
+                } else {
+                  result[i].newRecord = '开始聊天吧'
+                  result[i].newRecordTime = ''
+                }
+              })
+              .catch((err) => {
+                promiseErr(err, res)
+              })
+          }
           res.send({
             code: '',
             message: '',
