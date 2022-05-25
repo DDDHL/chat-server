@@ -7,6 +7,7 @@ const {
   checkReg,
   blurSearch,
   updateInfo,
+  changePwd,
 } = require('../data/userSql')
 const { addFriendList, searchFriendList } = require('../data/userFriendSql')
 const { decrypt } = require('../utils/secret')
@@ -196,6 +197,37 @@ router.post('/changeInfo', (req, res) => {
       promiseErr(err, res)
     })
 })
+
+// 用户修改密码
+router.post('/changePwd', (req, res) => {
+  let account = req.auth.account
+  let password = req.body.password
+  let newPwd = req.body.newPwd
+  if (!account || !password || !newPwd) {
+    throw new Error(1006)
+  }
+  changePwd(account, decrypt(password), decrypt(newPwd))
+    .then((result) => {
+      if (result.affectedRows == 1) {
+        res.send({
+          code: '',
+          message: '修改密码成功!',
+          data: {},
+        })
+        d
+      } else {
+        res.send({
+          code: 1008,
+          message: '原密码错误!',
+          data: {},
+        })
+      }
+    })
+    .catch((err) => {
+      promiseErr(err, res)
+    })
+})
+
 // 用户退出
 router.post('/logout', (req, res) => {
   res.send({

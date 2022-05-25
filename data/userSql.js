@@ -86,3 +86,15 @@ exports.updateInfo = (sex, name, signature, account) => {
     })
   })
 }
+
+// 修改密码
+exports.changePwd = (account, password, newPwd) => {
+  let strSql =
+    'update sys_user set password = (?) where account = (?) and password = (?)'
+  return new Promise((resolve, reject) => {
+    db.query(strSql, [newPwd, account, password], (err, results) => {
+      if (err) reject(err.message)
+      resolve(results)
+    })
+  })
+}
