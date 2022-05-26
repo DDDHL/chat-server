@@ -98,7 +98,6 @@ router.post('/getFriendList', (req, res) => {
       searchFriendListInfo(data)
         .then(async (result) => {
           // 查询最新的一条记录拼接到好友列表
-
           for (let i = 0; i < result.length; i++) {
             await checkChatRecordBySingle(account, result[i].account, 1)
               .then((record) => {

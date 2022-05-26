@@ -87,6 +87,69 @@ exports.updateInfo = (sex, name, signature, account) => {
   })
 }
 
+// 生成个人动态
+exports.createGroupNew = (account, path) => {
+  let strSql =
+    'insert into sys_user_group(account, info, state, createTime ,imgPath) values(?,?,?,?,?)'
+  return new Promise((resolve, reject) => {
+    db.query(strSql, [account, '', 'false', '', path], (err, results) => {
+      if (err) reject(err.message)
+      resolve(results)
+    })
+  })
+}
+// 删除个人动态state=false
+exports.deleteOne = (account) => {
+  let strSql = 'delete from sys_user_group where account=(?) and state=(?)'
+  return new Promise((resolve, reject) => {
+    db.query(strSql, [account, 'false'], (err, results) => {
+      if (err) reject(err.message)
+      resolve(results)
+    })
+  })
+}
+// 发布个人动态
+exports.publishSingleUpdate = (account, info, time, name, avatar) => {
+  let strSql =
+    'update sys_user_group set info = (?),createTime = (?),state=(?),name = (?),avatar = (?) where account = (?) and state = (?)'
+  return new Promise((resolve, reject) => {
+    db.query(
+      strSql,
+      [info, time, 'true', name, avatar, account, 'false'],
+      (err, results) => {
+        if (err) reject(err.message)
+        resolve(results)
+      }
+    )
+  })
+}
+// 发布文字动态
+exports.publishSingleInsert = (account, info, time, name, avatar) => {
+  let strSql =
+    'insert into sys_user_group(account,info,state,createTime,name,avatar) value (?,?,?,?,?,?)'
+  return new Promise((resolve, reject) => {
+    db.query(
+      strSql,
+      [account, info, 'true', time, name, avatar],
+      (err, results) => {
+        if (err) reject(err.message)
+        resolve(results)
+      }
+    )
+  })
+}
+
+// 查询好友动态
+exports.checkGroup = (accountList) => {
+  let strSql = `select * from sys_user_group where account in (${accountList})`
+  return new Promise((resolve, reject) => {
+    db.query(strSql, (err, results) => {
+      if (err) reject(err.message)
+      resolve(results)
+    })
+  })
+}
+
 // 修改密码
 exports.changePwd = (account, password, newPwd) => {
   let strSql =

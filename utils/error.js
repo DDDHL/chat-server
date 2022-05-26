@@ -21,7 +21,7 @@ exports.err = (err, req, res, next) => {
 }
 // 解决数据库异步错误
 exports.promiseErr = (err, res) => {
-  console.log('数据库操作错误:', err.sqlMessage)
+  console.log('数据库操作错误:', err.sqlMessage || err)
   res.send({
     code: 1006,
     message: '参数错误,请检查接口',
