@@ -6,7 +6,11 @@ exports.newImageAddress = (host, data, state = 'true') => {
     }
   } else if (state == 'false') {
     for (let i = 0; i < data.length; i++) {
-      data[i].imgPath = 'http://' + host + '/public/images/' + data[i].imgPath
+      if (data[i].imgPath) {
+        data[i].imgPath = 'http://' + host + '/public/group/' + data[i].imgPath
+      } else {
+        data[i].imgPath = ''
+      }
     }
   }
   return data
